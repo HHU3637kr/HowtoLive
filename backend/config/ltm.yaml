@@ -1,0 +1,19 @@
+long_term_memory:
+  enabled: true             # 启用长期记忆
+  provider: "mem0"
+  mode: "agent_control"     # agent_control: Agent通过工具主动调用（推荐）| static_control: 框架自动后台处理
+  on_disk: true             # 记忆持久化到本地磁盘
+  chat_model:
+    provider: "qwen"
+    model_name: "qwen3-max"
+    api_key_env: "sk-753970441a59408e84325c191b8ec563"
+    stream: false  # mem0 的 chat_model 必须使用非流式输出
+  embedding:
+    provider: "qwen"
+    model_name: "text-embedding-v2"
+    api_key_env: "sk-753970441a59408e84325c191b8ec563"
+  policy:
+    record_preferences: true
+    record_facts: true
+    max_items_per_session: 50
+    

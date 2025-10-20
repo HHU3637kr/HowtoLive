@@ -1,0 +1,65 @@
+# Python 编译文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+
+# IDE 配置文件
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 日志文件
+*.log
+logs/
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# Qdrant 数据目录
+qdrant_storage/
+qdrant_data/
+.ltm_storage_qdrant/
+
+# 会话文件
+.sessions/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 测试覆盖率
+.coverage
+htmlcov/
+.pytest_cache/
+
+# 分发/打包
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 临时文件
+*.tmp
+*.bak
+*.swp

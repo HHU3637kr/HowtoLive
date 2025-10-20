@@ -1,0 +1,10 @@
+llm:
+  provider: "qwen"          # 支持: qwen, openai, claude 等
+  qwen_api_key: "sk-753970441a59408e84325c191b8ec563"
+  qwen_model: "qwen3-next-80b-a3b-instruct"
+  temperature: 0.0
+  max_tokens: 4000
+  timeout: 30
+  streaming: true
+  enable_search: true        # 提供商支持时透传
+

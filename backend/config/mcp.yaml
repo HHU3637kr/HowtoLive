@@ -1,0 +1,22 @@
+mcp_servers:
+  howtocook:
+    enabled: true
+    protocol: stdio          # stdio 或 http
+    command: npx
+    args:
+      - "-y"
+      - "howtocook-mcp"
+    tool_group:
+      name: "cooking_knowledge"
+      description: "烹饪知识工具组（菜谱查询）"
+      active: true
+  
+  # 未来可扩展其他 MCP 服务示例
+  # example_http_service:
+  #   enabled: false
+  #   protocol: http
+  #   transport: streamable_http  # 或 sse
+  #   url: https://example.com/mcp
+  #   tool_group:
+  #     name: "example_tools"
+  #     description: "示例工具组"
