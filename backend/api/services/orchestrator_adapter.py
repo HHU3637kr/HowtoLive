@@ -445,16 +445,14 @@ class OrchestratorAdapter:
         # 为每个专业 Agent 创建实例
         domain_agents = {}
         for agent_name in ["howtoeat", "howtocook", "howtosleep", "howtoexercise"]:
-            # 每次创建新的 Toolkit（避免工具重复注册）
-            toolkit = Toolkit()
+            # 获取 Toolkit（直接使用全局，避免 groups 丢失）
+            toolkit = None
             
-            # 如果是 howtocook，从全局 MCP 复制工具到新 Toolkit
+            # 如果是 howtocook，直接使用全局 MCP 的 Toolkit
             if agent_name == "howtocook" and self.global_mcp:
-                global_toolkit = self.global_mcp.get_toolkit("howtocook")
-                if global_toolkit:
-                    # 复制全局 MCP 工具到新的 Toolkit
-                    for tool_name, tool_func in global_toolkit.tools.items():
-                        toolkit.tools[tool_name] = tool_func
+                toolkit = self.global_mcp.get_toolkit("howtocook")
+                # ✅ 直接使用全局 Toolkit，保留 groups 信息
+                # 工具函数是无状态的，可以安全并发使用
             
             # 获取用户的 RAG 知识库
             agent_kb = user_rag.get(agent_name)

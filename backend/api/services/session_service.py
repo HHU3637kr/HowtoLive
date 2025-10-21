@@ -133,12 +133,20 @@ class SessionService:
             # 如果是老格式（没有 meta.json），从 timeline 推断
             if not meta_file.exists() and timeline_file.exists():
                 with open(timeline_file, "r", encoding="utf-8") as f:
-                    timeline = json.load(f)
+                    timeline_data = json.load(f)
                 
                 title = f"会话 {session_id[:8]}"
                 created_at = datetime.now()
                 updated_at = datetime.now()
-                message_count = len(timeline)
+                
+                # 从 timeline 数据统计消息数量
+                if isinstance(timeline_data, dict):
+                    message_count = timeline_data.get("stats", {}).get("num_events", 0)
+                elif isinstance(timeline_data, list):
+                    message_count = len(timeline_data)
+                else:
+                    message_count = 0
+                
             elif meta_file.exists():
                 with open(meta_file, "r", encoding="utf-8") as f:
                     meta = json.load(f)
@@ -150,8 +158,15 @@ class SessionService:
                 # 统计消息数量
                 if timeline_file.exists():
                     with open(timeline_file, "r", encoding="utf-8") as f:
-                        timeline = json.load(f)
-                    message_count = len(timeline)
+                        timeline_data = json.load(f)
+                    
+                    # 从 timeline 数据统计消息数量
+                    if isinstance(timeline_data, dict):
+                        message_count = timeline_data.get("stats", {}).get("num_events", 0)
+                    elif isinstance(timeline_data, list):
+                        message_count = len(timeline_data)
+                    else:
+                        message_count = 0
                 else:
                     message_count = 0
             else:

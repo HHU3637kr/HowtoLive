@@ -80,6 +80,28 @@ async def lifespan(app: FastAPI):
     from backend.src.mcp_manager import MCPManager
     from backend.src.rag_manager import RAGManager
     
+    # 初始化 AgentScope Studio（如果启用）
+    import agentscope
+    studio_config_path = _BACKEND_DIR / "config" / "studio.yaml"
+    if studio_config_path.exists():
+        import yaml
+        with open(studio_config_path, "r", encoding="utf-8") as f:
+            studio_cfg = yaml.safe_load(f).get("studio", {})
+        
+        if studio_cfg.get("enabled", False):
+            try:
+                # 正确的 agentscope.init 参数
+                agentscope.init(
+                    studio_url=studio_cfg.get("url", "http://localhost:3001"),
+                    project=studio_cfg.get("project_name", "HowtoLive"),
+                )
+                print(f"✓ AgentScope Studio 已连接: {studio_cfg['url']}")
+            except Exception as e:
+                print(f"⚠️ AgentScope Studio 连接失败: {e}")
+                print(f"   提示: 请先启动 Studio (端口 {studio_cfg.get('port', 3001)})")
+    
+    # 原有配置加载
+    
     # 配置文件路径：相对于 backend 目录
     config_dir = _BACKEND_DIR / "config"
     cfg = load_app_config(str(config_dir))
@@ -260,6 +282,7 @@ if __name__ == "__main__":
         "**/data/**",
         "**/.sessions/**",
         "**/.ltm_storage_qdrant/**",  # mem0 长期记忆存储
+        "**/.studio_traces/**",         # AgentScope Studio 追踪数据
         
         # 日志文件
         "**/*.log",

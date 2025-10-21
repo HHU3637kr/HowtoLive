@@ -44,6 +44,11 @@ qdrant_data/
 # 会话文件
 .sessions/
 
+# AgentScope Studio 追踪数据
+.studio_traces/
+backend/.studio_traces/
+*.trace
+
 # Web API 相关
 backend/data/
 backend/uploads/
