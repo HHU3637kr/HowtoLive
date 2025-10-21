@@ -23,6 +23,7 @@ from backend.src.orchestrator import Orchestrator
 from backend.src.long_term_memory import build_mem0_long_term_memory
 from backend.src.logged_long_term_memory import wrap_with_logging
 from backend.src.mcp_manager import MCPManager
+from backend.src.rag_manager import RAGManager
 
 
 async def main() -> None:
@@ -51,18 +52,53 @@ async def main() -> None:
         except Exception as e:
             print(f"[MCP] ✗ MCP 初始化失败: {e}\n")
             mcp_manager = None
+    
+    # 初始化 RAG 管理器（负责知识库管理）
+    rag_manager = None
+    if cfg.rag and cfg.rag.enabled:
+        try:
+            print("\n")
+            rag_manager = RAGManager(cfg.rag)
+            await rag_manager.initialize()
+            print()
+        except Exception as e:
+            print(f"[RAG] ✗ RAG 初始化失败: {e}\n")
+            rag_manager = None
 
     general_answer = build_general_answer(cfg.llm, long_term_memory=user_ltm, ltm_mode=(cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control"))
 
-    # 获取 howtocook 的 MCP 工具集
-    howtocook_toolkit = mcp_manager.get_toolkit("howtocook") if mcp_manager else None
+    # 为每个 Agent 创建知识库和工具集
+    ltm_mode = cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control"
     
-    domain_agents = {
-        "howtoeat": build_howtoeat(cfg.llm, long_term_memory=user_ltm, ltm_mode=(cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control")),
-        "howtocook": build_howtocook(cfg.llm, long_term_memory=user_ltm, ltm_mode=(cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control"), toolkit=howtocook_toolkit),
-        "howtoexercise": build_howtoexercise(cfg.llm, long_term_memory=user_ltm, ltm_mode=(cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control")),
-        "howtosleep": build_howtosleep(cfg.llm, long_term_memory=user_ltm, ltm_mode=(cfg.ltm.mode if (cfg.ltm and cfg.ltm.enabled) else "agent_control")),
-    }
+    domain_agents = {}
+    for agent_name in ["howtoeat", "howtocook", "howtosleep", "howtoexercise"]:
+        # 创建 Toolkit（可能包含 MCP 工具）
+        toolkit = None
+        if mcp_manager and agent_name == "howtocook":
+            toolkit = mcp_manager.get_toolkit("howtocook")
+        
+        # 获取 Agent 的知识库
+        agent_kb = None
+        if rag_manager:
+            agent_kb = rag_manager.get_agent_kb(agent_name, user_id)
+        
+        # 构建 Agent
+        build_func = {
+            "howtoeat": build_howtoeat,
+            "howtocook": build_howtocook,
+            "howtosleep": build_howtosleep,
+            "howtoexercise": build_howtoexercise,
+        }[agent_name]
+        
+        agent = build_func(
+            cfg.llm,
+            long_term_memory=user_ltm,
+            ltm_mode=ltm_mode,
+            toolkit=toolkit,
+            knowledge=agent_kb,
+        )
+        
+        domain_agents[agent_name] = agent
 
     # list existing sessions for this user and allow selection (new directory layout)
     sessions_dir = os.path.join(_CURRENT_DIR, ".sessions", user_id)

@@ -85,10 +85,46 @@ class MCPConfig:
 
 
 @dataclass
+class RAGEmbeddingConfig:
+    """RAG 嵌入模型配置"""
+    provider: str
+    model_name: str
+    api_key_env: str
+    dimensions: int
+
+
+@dataclass
+class RAGAgentKBConfig:
+    """RAG Agent 知识库配置"""
+    collection_name: str
+    description: str
+
+
+@dataclass
+class RAGAgentConfig:
+    """RAG Agent 配置"""
+    enabled: bool
+    global_kb: RAGAgentKBConfig
+    user_kb: RAGAgentKBConfig
+
+
+@dataclass
+class RAGConfig:
+    """RAG 配置"""
+    enabled: bool
+    embedding: RAGEmbeddingConfig
+    multimodal_embedding: RAGEmbeddingConfig
+    agents: dict[str, RAGAgentConfig]
+    vector_store: dict
+    readers: dict
+
+
+@dataclass
 class AppConfig:
     llm: LLMConfig
     ltm: Optional[LTMConfig]
     mcp: Optional[MCPConfig] = None
+    rag: Optional[RAGConfig] = None
 
 
 def _load_yaml(path: str) -> dict:
@@ -179,6 +215,58 @@ def load_app_config(config_dir: str = "backend/config") -> AppConfig:
         
         mcp = MCPConfig(servers=servers)
     
-    return AppConfig(llm=llm, ltm=ltm, mcp=mcp)
+    # 加载 RAG 配置
+    rag_yaml = _load_yaml(os.path.join(config_dir, "rag.yaml"))
+    rag_raw = rag_yaml.get("rag") if rag_yaml else None
+    
+    rag: Optional[RAGConfig] = None
+    if rag_raw:
+        # 解析嵌入配置
+        emb_raw = rag_raw.get("embedding", {})
+        embedding = RAGEmbeddingConfig(
+            provider=emb_raw.get("provider", "qwen"),
+            model_name=emb_raw.get("model_name", "text-embedding-v3"),
+            api_key_env=emb_raw.get("api_key_env", "DASHSCOPE_API_KEY"),
+            dimensions=int(emb_raw.get("dimensions", 1024)),
+        )
+        
+        # 解析多模态嵌入配置
+        mm_emb_raw = rag_raw.get("multimodal_embedding", {})
+        multimodal_embedding = RAGEmbeddingConfig(
+            provider=mm_emb_raw.get("provider", "qwen"),
+            model_name=mm_emb_raw.get("model_name", "multimodal-embedding-v1"),
+            api_key_env=mm_emb_raw.get("api_key_env", "DASHSCOPE_API_KEY"),
+            dimensions=int(mm_emb_raw.get("dimensions", 1024)),
+        )
+        
+        # 解析各 Agent 的知识库配置
+        agents = {}
+        agents_raw = rag_raw.get("agents", {})
+        for agent_name, agent_data in agents_raw.items():
+            global_kb_raw = agent_data.get("global_kb", {})
+            user_kb_raw = agent_data.get("user_kb", {})
+            
+            agents[agent_name] = RAGAgentConfig(
+                enabled=bool(agent_data.get("enabled", False)),
+                global_kb=RAGAgentKBConfig(
+                    collection_name=global_kb_raw.get("collection_name", f"global_kb_{agent_name}"),
+                    description=global_kb_raw.get("description", ""),
+                ),
+                user_kb=RAGAgentKBConfig(
+                    collection_name=user_kb_raw.get("collection_name_template", f"user_kb_{{user_id}}_{agent_name}"),
+                    description=user_kb_raw.get("description", ""),
+                ),
+            )
+        
+        rag = RAGConfig(
+            enabled=bool(rag_raw.get("enabled", False)),
+            embedding=embedding,
+            multimodal_embedding=multimodal_embedding,
+            agents=agents,
+            vector_store=rag_raw.get("vector_store", {}),
+            readers=rag_raw.get("readers", {}),
+        )
+    
+    return AppConfig(llm=llm, ltm=ltm, mcp=mcp, rag=rag)
 
 

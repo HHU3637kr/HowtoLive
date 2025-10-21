@@ -1,0 +1,36 @@
+api:
+  # 服务器配置
+  host: "0.0.0.0"
+  port: 8000
+  reload: true  # 开发模式下自动重载
+  
+  # CORS 配置
+  cors:
+    enabled: true
+    origins:
+      - "http://localhost:3000"  # React 开发服务器
+      - "http://127.0.0.1:3000"
+    allow_credentials: true
+    allow_methods: ["*"]
+    allow_headers: ["*"]
+  
+  # JWT 认证配置
+  auth:
+    secret_key: "your-secret-key-change-this-in-production"  # 生产环境请修改
+    algorithm: "HS256"
+    access_token_expire_minutes: 1440  # 24小时
+  
+  # 数据库配置（路径相对于 backend 目录）
+  database:
+    path: "data/users.db"  # 实际路径: backend/data/users.db
+  
+  # 会话存储配置（路径相对于 backend 目录）
+  sessions:
+    path: ".sessions"  # 实际路径: backend/.sessions
+  
+  # SSE 配置
+  sse:
+    ping_interval: 15  # 心跳间隔（秒）
+    max_age: 3600      # 最大连接时长（秒）
+
+

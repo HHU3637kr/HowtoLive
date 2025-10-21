@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
 from agentscope.agent import ReActAgent
 from agentscope.memory import InMemoryMemory
 from agentscope.tool import Toolkit
 
 from ..model_factory import build_chat_model
 from ..config import LLMConfig
+
+# 获取 prompts 目录的绝对路径
+_PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
 
 
 def build_general_answer(
@@ -15,9 +19,14 @@ def build_general_answer(
     ltm_mode: str = "agent_control",
 ) -> ReActAgent:
     bundle = build_chat_model(llm)  # use default streaming from YAML
+    
+    # 使用绝对路径加载 prompt
+    prompt_path = _PROMPTS_DIR / "general_answer.system.md"
+    sys_prompt = prompt_path.read_text(encoding="utf-8")
+    
     agent = ReActAgent(
         name="general",
-        sys_prompt=open("backend/src/prompts/general_answer.system.md", "r", encoding="utf-8").read(),
+        sys_prompt=sys_prompt,
         model=bundle.model,
         formatter=bundle.formatter,
         memory=InMemoryMemory(),

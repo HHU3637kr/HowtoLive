@@ -1,0 +1,15 @@
+# FastAPI Web 应用依赖
+
+# FastAPI 核心
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# 认证相关
+python-jose[cryptography]>=3.3.0  # JWT token
+passlib[bcrypt]>=1.7.4            # 密码哈希
+
+# 其他
+python-multipart>=0.0.6           # 表单数据处理
+sse-starlette>=1.6.5              # SSE 支持
+
+

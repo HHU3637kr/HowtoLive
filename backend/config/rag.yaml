@@ -1,0 +1,71 @@
+rag:
+  enabled: true
+  
+  # 嵌入模型配置
+  embedding:
+    provider: "qwen"
+    model_name: "text-embedding-v3"
+    api_key_env: "DASHSCOPE_API_KEY"
+    dimensions: 1024
+  
+  # 多模态嵌入配置（用于图片、视频）
+  multimodal_embedding:
+    provider: "qwen"
+    model_name: "multimodal-embedding-v1"
+    api_key_env: "DASHSCOPE_API_KEY"
+    dimensions: 1024
+  
+  # 各 Agent 的知识库配置
+  agents:
+    howtoeat:
+      enabled: true
+      global_kb:
+        collection_name: "global_kb_howtoeat"
+        description: "饮食与营养领域知识"
+      user_kb:
+        collection_name_template: "user_kb_{user_id}_howtoeat"
+        description: "用户的饮食笔记和经验"
+    
+    howtocook:
+      enabled: true
+      global_kb:
+        collection_name: "global_kb_howtocook"
+        description: "烹饪方法和技巧"
+      user_kb:
+        collection_name_template: "user_kb_{user_id}_howtocook"
+        description: "用户的烹饪笔记和菜谱"
+    
+    howtosleep:
+      enabled: true
+      global_kb:
+        collection_name: "global_kb_howtosleep"
+        description: "睡眠改善方法和技巧"
+      user_kb:
+        collection_name_template: "user_kb_{user_id}_howtosleep"
+        description: "用户的睡眠记录和经验"
+    
+    howtoexercise:
+      enabled: true
+      global_kb:
+        collection_name: "global_kb_howtoexercise"
+        description: "运动训练方法和计划"
+      user_kb:
+        collection_name_template: "user_kb_{user_id}_howtoexercise"
+        description: "用户的训练笔记和记录"
+  
+  # 向量数据库配置
+  vector_store:
+    provider: "qdrant"
+    location: "http://localhost:6333"  # 使用 Docker Qdrant 服务（与 mem0 共用）
+    # 注意：需要先运行 backend/start_qdrant.ps1 启动 Qdrant 服务
+  
+  # Reader 配置
+  readers:
+    text:
+      chunk_size: 512
+      split_by: "paragraph"
+    pdf:
+      chunk_size: 512
+    image:
+      enabled: true
+

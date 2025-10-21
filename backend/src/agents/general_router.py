@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from agentscope.agent import ReActAgent
@@ -9,12 +10,20 @@ from ..model_factory import build_chat_model
 from ..config import LLMConfig
 from ..routing_schema import RoutingChoice
 
+# 获取 prompts 目录的绝对路径
+_PROMPTS_DIR = Path(__file__).parent.parent / "prompts"
+
 
 def build_general_router(llm: LLMConfig) -> ReActAgent:
     bundle = build_chat_model(llm, force_stream=False)
+    
+    # 使用绝对路径加载 prompt
+    prompt_path = _PROMPTS_DIR / "general_router.system.md"
+    sys_prompt = prompt_path.read_text(encoding="utf-8")
+    
     agent = ReActAgent(
         name="general-router",
-        sys_prompt=open("backend/src/prompts/general_router.system.md", "r", encoding="utf-8").read(),
+        sys_prompt=sys_prompt,
         model=bundle.model,
         formatter=bundle.formatter,
         memory=InMemoryMemory(),

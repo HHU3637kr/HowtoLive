@@ -3,12 +3,16 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.pyd
 
 # 虚拟环境
 venv/
 env/
 ENV/
 .venv/
+.python-version
+pip-log.txt
+pip-delete-this-directory.txt
 
 # IDE 配置文件
 .vscode/
@@ -32,13 +36,39 @@ logs/
 *.sqlite
 *.sqlite3
 
-# Qdrant 数据目录
+# Qdrant 数据目录（Docker volume 挂载点）
 qdrant_storage/
 qdrant_data/
 .ltm_storage_qdrant/
 
 # 会话文件
 .sessions/
+
+# Web API 相关
+backend/data/
+backend/uploads/
+*.db-journal
+*.db-shm
+*.db-wal
+
+# 前端相关
+frontend/node_modules/
+frontend/howtolive-chat/node_modules/
+frontend/build/
+frontend/howtolive-chat/build/
+frontend/dist/
+frontend/howtolive-chat/dist/
+frontend/.next/
+frontend/.cache/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/howtolive-chat/.env
+frontend/howtolive-chat/.env.local
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+*.tsbuildinfo
 
 # 操作系统文件
 .DS_Store
@@ -63,3 +93,21 @@ build/
 *.tmp
 *.bak
 *.swp
+
+# Node.js 依赖（通用）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# 缓存目录
+.cache/
+.parcel-cache/
+.turbo/
+
+# 构建产物
+*.min.js
+*.min.css
+
