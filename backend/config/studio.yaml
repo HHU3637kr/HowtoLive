@@ -1,8 +1,8 @@
 studio:
   # AgentScope Studio 配置
   enabled: true  # 是否启用 Studio（开发环境建议启用，生产环境关闭）
-  url: "http://localhost:3001"  # Studio 运行地址
-  port: 3001  # Studio 端口
+  url: "http://localhost:3000"  # Studio 运行地址
+  port: 3000  # Studio 端口
   project_name: "HowtoLive"  # 项目名称
   
   # 追踪配置

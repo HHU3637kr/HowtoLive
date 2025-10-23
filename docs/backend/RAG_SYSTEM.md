@@ -68,33 +68,33 @@ python -m backend.main
 
 ```bash
 # 导入文本文件
-python backend/tools/import_knowledge.py howtoeat ./data/nutrition.txt text
+python -m backend.tools.import_knowledge howtoeat ./data/nutrition.txt text
 
 # 导入 PDF 文件
-python backend/tools/import_knowledge.py howtocook ./data/recipes.pdf pdf
+python -m backend.tools.import_knowledge howtocook ./data/recipes.pdf pdf
 
 # 导入图片文件
-python backend/tools/import_knowledge.py howtosleep ./data/sleep_tips.png image
+python -m backend.tools.import_knowledge howtosleep ./data/sleep_tips.png image
 ```
 
 #### 2. 查看知识库内容
 
 ```bash
 # 查看全局知识库
-python backend/tools/list_knowledge.py howtoeat
+python -m backend.tools.list_knowledge howtoeat
 
 # 查看用户知识库
-python backend/tools/list_knowledge.py howtocook --user Rking
+python -m backend.tools.list_knowledge howtocook --user Rking
 ```
 
 #### 3. 清空知识库
 
 ```bash
 # 清空全局知识库
-python backend/tools/clear_knowledge.py howtoeat
+python -m backend.tools.clear_knowledge howtoeat
 
 # 清空用户知识库
-python backend/tools/clear_knowledge.py howtocook --user Rking
+python -m backend.tools.clear_knowledge howtocook --user Rking
 ```
 
 ## Agent 使用知识库
@@ -254,6 +254,6 @@ $env:DASHSCOPE_API_KEY = "your-api-key"
 
 使用 `backend/tools/import_knowledge.py` 导入初始知识：
 ```bash
-python backend/tools/import_knowledge.py howtoeat ./data/nutrition.txt text
+python -m backend.tools.import_knowledge howtoeat ./data/nutrition.txt text
 ```
 

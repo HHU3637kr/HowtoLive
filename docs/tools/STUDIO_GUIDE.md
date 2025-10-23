@@ -32,10 +32,10 @@ cd backend
 
 **方式2：手动启动**
 ```bash
-# 设置端口为 5000
-set PORT=5000  # Windows CMD
+# 设置端口为 3000
+set PORT=3000  # Windows CMD
 # 或
-$env:PORT = "5000"  # PowerShell
+$env:PORT = "3000"  # PowerShell
 
 as_studio
 ```
@@ -49,12 +49,12 @@ python -m api.main
 
 启动时会看到：
 ```
-✓ AgentScope Studio 已连接: http://localhost:5000
+✓ AgentScope Studio 已连接: http://localhost:3000
 ```
 
 ### 4. 访问 Studio
 
-浏览器打开：`http://localhost:5000`
+浏览器打开：`http://localhost:3000`
 
 ---
 
@@ -65,8 +65,8 @@ python -m api.main
 ```yaml
 studio:
   enabled: true  # 是否启用（生产环境建议关闭）
-  url: "http://localhost:5000"  # Studio 地址
-  port: 5000  # 端口（避开前端的 3000）
+  url: "http://localhost:3000"  # Studio 地址
+  port: 3000  # 端口
   project_name: "HowtoLive"  # 项目名称
   
   tracing:
@@ -157,24 +157,24 @@ studio:
 ## 🔧 端口说明
 
 **项目端口分配：**
-- `3000` - React 前端
-- `5000` - AgentScope Studio
+- `3000` - AgentScope Studio
+- `3001` - React 前端
 - `6333` - Qdrant 向量数据库
 - `8000` - FastAPI 后端
 
 **修改 Studio 端口：**
 
-如果 5000 端口也被占用，修改 `backend/config/studio.yaml`：
+如果 3000 端口被占用，修改 `backend/config/studio.yaml`：
 
 ```yaml
 studio:
-  url: "http://localhost:6000"  # 改为其他端口
-  port: 6000
+  url: "http://localhost:3001"  # 改为其他端口
+  port: 3001
 ```
 
 启动时使用：
 ```bash
-$env:PORT = "6000"
+$env:PORT = "3001"
 as_studio
 ```
 
@@ -199,7 +199,7 @@ as_studio
 
 ## 🎨 Studio 界面示例
 
-访问 `http://localhost:5000` 后，你会看到：
+访问 `http://localhost:3000` 后，你会看到：
 
 ```
 ┌─────────────────────────────────────────┐
@@ -239,7 +239,7 @@ as_studio
 ### Q: Studio 无法连接？
 **A:** 确保：
 1. Studio 已启动（`as_studio`）
-2. 端口正确（5000）
+2. 端口正确（3000）
 3. 后端启动时看到"Studio 已连接"提示
 
 ### Q: 看不到追踪数据？
@@ -257,6 +257,6 @@ as_studio
 
 1. ✅ 启动 Studio: `.\backend\start_studio.ps1`
 2. ✅ 启动后端: `python -m backend.api.main`
-3. ✅ 访问 Studio: `http://localhost:5000`
+3. ✅ 访问 Studio: `http://localhost:3000`
 4. ✅ 发送消息，查看可视化追踪！
 

@@ -5,12 +5,6 @@ import os
 import sys
 import uuid
 
-# Ensure project root is on sys.path when executed as a script (python backend/main.py)
-_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-_PROJECT_ROOT = os.path.dirname(_CURRENT_DIR)
-if _PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, _PROJECT_ROOT)
-
 from backend.src.config import load_app_config
 from backend.src.agents.general_router import build_general_router
 from backend.src.agents.general_answer import build_general_answer

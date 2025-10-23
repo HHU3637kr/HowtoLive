@@ -1,21 +1,17 @@
 """导入知识到全局知识库的脚本
 
-使用方法：
-    python backend/tools/import_knowledge.py <agent_name> <data_path> [data_type]
+使用方法（必须在项目根目录运行）：
+    python -m backend.tools.import_knowledge <agent_name> <data_path> [data_type]
     
 示例：
-    python backend/tools/import_knowledge.py howtoeat ./data/nutrition.txt text
-    python backend/tools/import_knowledge.py howtocook ./data/recipes.pdf pdf
-    python backend/tools/import_knowledge.py howtosleep ./data/sleep_tips.png image
+    python -m backend.tools.import_knowledge howtoeat ./data/nutrition.txt text
+    python -m backend.tools.import_knowledge howtocook ./data/recipes.pdf pdf
+    python -m backend.tools.import_knowledge howtosleep ./data/sleep_tips.png image
 """
 
 import asyncio
 import sys
 from pathlib import Path
-
-# 添加项目根目录到路径
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from backend.src.config import load_app_config
 from backend.src.rag_manager import RAGManager

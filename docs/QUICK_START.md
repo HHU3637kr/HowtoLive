@@ -60,7 +60,13 @@ powershell -ExecutionPolicy Bypass -File backend/start_qdrant.ps1
 ### 步骤 5：启动后端服务（30秒）
 
 ```bash
-# 确保在项目根目录
+# ⚠️ 重要：必须在项目根目录运行
+# 确保当前目录是 HowtoLive/
+python -m backend.api.main
+```
+
+**或者直接运行脚本**（推荐）：
+```bash
 python backend/api/main.py
 ```
 
@@ -81,7 +87,7 @@ cd frontend/howtolive-chat
 npm start
 ```
 
-**浏览器自动打开**：`http://localhost:3000`
+**浏览器自动打开**：`http://localhost:3001`
 
 ## 🎉 开始使用
 
@@ -136,8 +142,9 @@ npm start
 ### Q3: 前端无法连接后端？
 **A**: 检查：
 1. 后端是否在 `http://localhost:8000` 运行
-2. 浏览器控制台是否有 CORS 错误
-3. `frontend/howtolive-chat/src/config.ts` 中的 API 地址是否正确
+2. 前端是否在 `http://localhost:3001` 运行
+3. 浏览器控制台是否有 CORS 错误
+4. `frontend/howtolive-chat/src/config.ts` 中的 API 地址是否正确
 
 ### Q4: AI 没有回复？
 **A**: 检查：
@@ -156,24 +163,25 @@ npm start
 为了获得更好的回答质量，可以导入领域知识：
 
 ```bash
+# ⚠️ 确保在项目根目录运行
 # 导入饮食知识
-python backend/tools/import_knowledge.py howtoeat ./data/nutrition.txt text
+python -m backend.tools.import_knowledge howtoeat ./data/nutrition.txt text
 
 # 导入烹饪菜谱
-python backend/tools/import_knowledge.py howtocook ./data/recipes.pdf pdf
+python -m backend.tools.import_knowledge howtocook ./data/recipes.pdf pdf
 
 # 查看知识库
-python backend/tools/list_knowledge.py howtoeat
+python -m backend.tools.list_knowledge howtoeat
 ```
 
 ## 🎯 系统端口说明
 
 | 服务 | 端口 | 用途 |
 |------|------|------|
-| 前端 | 3000 | React 应用 |
-| 后端 API | 8000 | FastAPI 服务 |
-| AgentScope Studio | 5000 | Agent 可视化 |
+| AgentScope Studio | 3000 | Agent 可视化 |
+| 前端 | 3001 | React 应用 |
 | Qdrant | 6333 | 向量数据库 |
+| 后端 API | 8000 | FastAPI 服务 |
 
 ## 📞 需要帮助？
 

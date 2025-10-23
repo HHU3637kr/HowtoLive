@@ -63,7 +63,7 @@ python api/main.py
 cd frontend/howtolive-chat
 npm start
 ```
-前端将运行在 `http://localhost:3000` 并自动打开浏览器
+前端将运行在 `http://localhost:3001` 并自动打开浏览器
 
 ---
 
@@ -106,10 +106,10 @@ export const API_BASE_URL = 'http://localhost:8000';
 ```
 
 ### 修改端口
-如果需要修改前端端口，可以在 `package.json` 中添加：
+前端默认运行在 3001 端口。如果需要修改，可以在 `package.json` 中更改：
 ```json
 "scripts": {
-  "start": "PORT=3001 react-scripts start"
+  "start": "PORT=3002 react-scripts start"
 }
 ```
 
@@ -142,6 +142,7 @@ export const API_BASE_URL = 'http://localhost:8000';
 1. 后端是否已启动（`http://localhost:8000`）
 2. `src/config.ts` 中的 `API_BASE_URL` 是否正确
 3. 浏览器控制台是否有 CORS 错误
+4. 后端 CORS 配置是否允许 `http://localhost:3001`
 
 ### Q: 登录后刷新页面需要重新登录？
 **A**: Token 存储在 `localStorage`，正常情况下不会丢失。如果出现此问题，检查浏览器控制台是否有 401 错误。

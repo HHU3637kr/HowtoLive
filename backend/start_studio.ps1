@@ -20,13 +20,13 @@ if (-not $studioInstalled) {
 
 Write-Host "✓ AgentScope Studio 已安装" -ForegroundColor Green
 Write-Host ""
-Write-Host "启动 Studio (端口 3001)..." -ForegroundColor Yellow
-Write-Host "访问地址: http://localhost:3001" -ForegroundColor Cyan
+Write-Host "启动 Studio (端口 3000)..." -ForegroundColor Yellow
+Write-Host "访问地址: http://localhost:3000" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "按 Ctrl+C 停止 Studio" -ForegroundColor Gray
 Write-Host ""
 
-# 启动 Studio，指定端口为 3001
-$env:PORT = "3001"
+# 启动 Studio，指定端口为 3000
+$env:PORT = "3000"
 as_studio
 

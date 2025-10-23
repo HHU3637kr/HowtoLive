@@ -1,24 +1,20 @@
 """查看知识库内容的脚本
 
-使用方法：
+使用方法（必须在项目根目录运行）：
     # 列出全局知识库
-    python backend/tools/list_knowledge.py <agent_name>
+    python -m backend.tools.list_knowledge <agent_name>
     
     # 列出用户知识库
-    python backend/tools/list_knowledge.py <agent_name> --user <user_id>
+    python -m backend.tools.list_knowledge <agent_name> --user <user_id>
     
 示例：
-    python backend/tools/list_knowledge.py howtoeat
-    python backend/tools/list_knowledge.py howtocook --user Rking
+    python -m backend.tools.list_knowledge howtoeat
+    python -m backend.tools.list_knowledge howtocook --user Rking
 """
 
 import asyncio
 import sys
 from pathlib import Path
-
-# 添加项目根目录到路径
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from backend.src.config import load_app_config
 from backend.src.rag_manager import RAGManager

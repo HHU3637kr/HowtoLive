@@ -49,8 +49,8 @@ powershell -ExecutionPolicy Bypass -File backend/start_qdrant.ps1
 # 配置 API Key
 # 在 backend/config/llm.yaml 中配置通义千问 API Key
 
-# 启动后端服务
-python backend/api/main.py
+# 启动后端服务（必须在项目根目录运行）
+python -m backend.api.main
 ```
 
 后端将运行在 `http://localhost:8000`
@@ -68,11 +68,11 @@ npm install
 npm start
 ```
 
-前端将运行在 `http://localhost:3000`
+前端将运行在 `http://localhost:3001`
 
 ### 4. 开始使用
 
-1. 访问 `http://localhost:3000`
+1. 访问 `http://localhost:3001`
 2. 注册账号并登录
 3. 创建对话，开始与 AI 助手交流
 
@@ -122,14 +122,15 @@ npm start
 
 ### 知识库管理
 ```bash
+# 必须在项目根目录运行
 # 导入知识
-python backend/tools/import_knowledge.py howtoeat ./data/nutrition.txt text
+python -m backend.tools.import_knowledge howtoeat ./data/nutrition.txt text
 
 # 查看知识库
-python backend/tools/list_knowledge.py howtoeat
+python -m backend.tools.list_knowledge howtoeat
 
 # 清空知识库
-python backend/tools/clear_knowledge.py howtoeat
+python -m backend.tools.clear_knowledge howtoeat
 ```
 
 ### 可视化调试
@@ -137,7 +138,7 @@ python backend/tools/clear_knowledge.py howtoeat
 # 启动 AgentScope Studio
 .\backend\start_studio.ps1
 
-# 访问 http://localhost:5000
+# 访问 http://localhost:3000
 ```
 
 ## 📊 项目结构

@@ -21,10 +21,15 @@ powershell -ExecutionPolicy Bypass -File backend/start_qdrant.ps1
 ### 3. 启动 API 服务器
 
 ```bash
-# 方式1：直接运行
+# ⚠️ 必须在项目根目录运行
+
+# 方式1：使用模块方式（推荐）
+python -m backend.api.main
+
+# 方式2：直接运行脚本
 python backend/api/main.py
 
-# 方式2：使用 uvicorn
+# 方式3：使用 uvicorn
 uvicorn backend.api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -270,16 +275,18 @@ curl -X POST http://localhost:8000/api/chat/stream \
 ### CLI 模式（保留）
 
 ```bash
+# ⚠️ 必须在项目根目录运行
 # 运行 CLI 模式
-python backend/cli.py
-# 或
 python -m backend.cli
 ```
 
 ### Web API 模式（新增）
 
 ```bash
+# ⚠️ 必须在项目根目录运行
 # 运行 Web API 服务器
+python -m backend.api.main
+# 或
 python backend/api/main.py
 ```
 

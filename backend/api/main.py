@@ -10,13 +10,6 @@ import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-# 添加项目根目录到路径（支持直接运行此文件）
-_CURRENT_DIR = Path(__file__).parent
-_BACKEND_DIR = _CURRENT_DIR.parent
-_PROJECT_ROOT = _BACKEND_DIR.parent
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -43,6 +36,9 @@ async def lifespan(app: FastAPI):
     
     启动时初始化服务和全局资源，关闭时清理
     """
+    import time
+    _total_start = time.time()
+    
     global auth_service, session_service, chat_service
     global global_mcp_manager, global_rag_manager, global_config
     
@@ -50,6 +46,8 @@ async def lifespan(app: FastAPI):
     import logging
     import sys
     from pathlib import Path
+    
+    _stage_start = time.time()
     
     # 配置根日志记录器
     logging.basicConfig(
@@ -64,25 +62,32 @@ async def lifespan(app: FastAPI):
     logging.getLogger('backend.api.services.orchestrator_adapter').setLevel(logging.INFO)
     logging.getLogger('uvicorn.access').setLevel(logging.WARNING)  # 减少访问日志
     
+    print(f"⏱️  [日志配置]: {time.time() - _stage_start:.2f}秒")
+    
     print("=" * 80)
     print("HowToLive Web API 启动中...")
     print("=" * 80)
     
+    _stage_start = time.time()
+    
     # 加载配置
-    
-    _CURRENT_DIR = Path(__file__).parent
-    _BACKEND_DIR = _CURRENT_DIR.parent
-    _PROJECT_ROOT = _BACKEND_DIR.parent
-    if str(_PROJECT_ROOT) not in sys.path:
-        sys.path.insert(0, str(_PROJECT_ROOT))
-    
     from backend.src.config import load_app_config
     from backend.src.mcp_manager import MCPManager
     from backend.src.rag_manager import RAGManager
+    print(f"⏱️  [导入核心模块]: {time.time() - _stage_start:.2f}秒")
+    
+    # 获取配置目录路径
+    _current_dir = Path(__file__).parent
+    _backend_dir = _current_dir.parent
+    
+    _stage_start = time.time()
     
     # 初始化 AgentScope Studio（如果启用）
     import agentscope
-    studio_config_path = _BACKEND_DIR / "config" / "studio.yaml"
+    print(f"⏱️  [导入 AgentScope]: {time.time() - _stage_start:.2f}秒")
+    _stage_start = time.time()
+    
+    studio_config_path = _backend_dir / "config" / "studio.yaml"
     if studio_config_path.exists():
         import yaml
         with open(studio_config_path, "r", encoding="utf-8") as f:
@@ -92,27 +97,33 @@ async def lifespan(app: FastAPI):
             try:
                 # 正确的 agentscope.init 参数
                 agentscope.init(
-                    studio_url=studio_cfg.get("url", "http://localhost:3001"),
+                    studio_url=studio_cfg.get("url", "http://localhost:3000"),
                     project=studio_cfg.get("project_name", "HowtoLive"),
                 )
                 print(f"✓ AgentScope Studio 已连接: {studio_cfg['url']}")
             except Exception as e:
                 print(f"⚠️ AgentScope Studio 连接失败: {e}")
-                print(f"   提示: 请先启动 Studio (端口 {studio_cfg.get('port', 3001)})")
+                print(f"   提示: 请先启动 Studio (端口 {studio_cfg.get('port', 3000)})")
+    
+    print(f"⏱️  [AgentScope Studio 初始化]: {time.time() - _stage_start:.2f}秒")
+    _stage_start = time.time()
     
     # 原有配置加载
     
     # 配置文件路径：相对于 backend 目录
-    config_dir = _BACKEND_DIR / "config"
+    config_dir = _backend_dir / "config"
     cfg = load_app_config(str(config_dir))
     global_config = cfg  # 保存全局配置
     
     # 加载 API 配置
     import yaml
     # 使用绝对路径，从项目根目录开始
-    api_config_path = _BACKEND_DIR / "config" / "api.yaml"
+    api_config_path = _backend_dir / "config" / "api.yaml"
     with open(api_config_path, "r", encoding="utf-8") as f:
         api_cfg = yaml.safe_load(f).get("api", {})
+    
+    print(f"⏱️  [加载配置文件]: {time.time() - _stage_start:.2f}秒")
+    _stage_start = time.time()
     
     # === 第1步：初始化全局资源（耗时，但只需一次）===
     print("\n[1] 初始化全局资源...")
@@ -128,6 +139,9 @@ async def lifespan(app: FastAPI):
             print(f"  ✗ MCP 初始化失败: {e}")
             global_mcp_manager = None
     
+    print(f"⏱️  [MCP 初始化]: {time.time() - _stage_start:.2f}秒")
+    _stage_start = time.time()
+    
     # 初始化 RAG 管理器（全局共享）
     if cfg.rag and cfg.rag.enabled:
         try:
@@ -139,12 +153,15 @@ async def lifespan(app: FastAPI):
             print(f"  ✗ RAG 初始化失败: {e}")
             global_rag_manager = None
     
+    print(f"⏱️  [RAG 初始化]: {time.time() - _stage_start:.2f}秒")
+    _stage_start = time.time()
+    
     # === 第2步：初始化应用服务 ===
     print("\n[2] 初始化应用服务...")
     
     # 认证服务 - 使用绝对路径确保数据位置固定
     db_relative_path = api_cfg.get("database", {}).get("path", "data/users.db")
-    db_path = _BACKEND_DIR / db_relative_path
+    db_path = _backend_dir / db_relative_path
     
     # 确保数据目录存在
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -158,7 +175,7 @@ async def lifespan(app: FastAPI):
     
     # 会话服务 - 使用绝对路径
     sessions_relative_path = api_cfg.get("sessions", {}).get("path", ".sessions")
-    sessions_dir = _BACKEND_DIR / sessions_relative_path
+    sessions_dir = _backend_dir / sessions_relative_path
     session_service = SessionService(sessions_base_dir=str(sessions_dir))
     print(f"  ✓ 会话服务已初始化 (会话目录: {sessions_dir})")
     
@@ -170,10 +187,14 @@ async def lifespan(app: FastAPI):
     )
     print("  ✓ 聊天服务已初始化")
     
+    print(f"⏱️  [应用服务初始化]: {time.time() - _stage_start:.2f}秒")
+    
+    _total_elapsed = time.time() - _total_start
     print("\n" + "=" * 80)
     print("✓ HowToLive Web API 已启动")
     print(f"  - API 文档: http://localhost:{api_cfg.get('port', 8000)}/docs")
     print(f"  - ReDoc: http://localhost:{api_cfg.get('port', 8000)}/redoc")
+    print(f"\n🚀 总启动时间: {_total_elapsed:.2f}秒")
     print("=" * 80)
     
     yield
@@ -206,8 +227,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
     ],
     allow_credentials=True,
     allow_methods=["*"],
