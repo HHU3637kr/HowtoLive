@@ -17,7 +17,10 @@ pip-delete-this-directory.txt
 # IDE 配置文件
 .vscode/
 .idea/
-.cursor/
+# .cursor/ 目录部分忽略
+.cursor/*
+!.cursor/rules/      # 保留规则文件
+!.cursor/commands/   # 保留命令文件
 *.swp
 *.swo
 *~
@@ -98,6 +101,15 @@ build/
 *.tmp
 *.bak
 *.swp
+
+# 文档相关
+# 确保 docs/ 目录不被忽略
+!docs/
+!docs/**/*.md
+!README.md
+# 但忽略文档的临时文件
+docs/**/*.tmp
+docs/**/*.bak
 
 # Node.js 依赖（通用）
 node_modules/

@@ -335,5 +335,5 @@ powershell -ExecutionPolicy Bypass -File backend/start_qdrant.ps1
 
 完成后端 API 后，继续开发前端 React 应用。
 
-参考 `.cursor/plans/web-chat-interface.plan.md` 中的前端开发步骤。
+参考 [前端使用指南](../frontend/FRONTEND_GUIDE.md) 了解前端开发和部署详情。
 
